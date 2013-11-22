@@ -1,0 +1,1 @@
+cmd_Release/obj.target/sixense.node := flock ./Release/linker.lock g++ -shared -pthread -rdynamic -m64  -Wl,-soname=sixense.node -o Release/obj.target/sixense.node -Wl,--start-group Release/obj.target/sixense/sixense.o -Wl,--end-group 
