@@ -10,3 +10,5 @@ SixenseSDK/sixense.h
 test.js
 
 build/
+
+node_modules/

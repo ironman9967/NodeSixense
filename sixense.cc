@@ -264,7 +264,7 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
 v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_data) {
     v8::Local<v8::Array> arr = Array::New();
     int maxControllers = sixenseGetMaxControllersLocal();
-    for (unsigned int i = 0; i < maxControllers; i++) {
+    for (int i = 0; i < maxControllers; i++) {
         arr->Set(i, parseSixenseControllerData(all_data.controllers[i]));
     }
     return arr;
