@@ -4,3 +4,9 @@ NodeSixense.iws
 .idea/workspace.xml
 
 .idea/dictionaries/
+
+SixenseSDK/sixense.h
+
+test.js
+
+build/

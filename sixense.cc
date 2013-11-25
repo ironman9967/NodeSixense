@@ -3,7 +3,7 @@
 #include <v8.h>
 
 #include <dlfcn.h>
-#include "/home/tyson-hester/Development/SDKs/sixenseSDK/include/sixense.h"
+#include "./SixenseSDK/sixense.h"
 
 using namespace v8;
 
@@ -12,7 +12,7 @@ void* handle = dlopen("./SixenseSDK/libsixense_x64.so", RTLD_NOW);
 Handle<Value> sixenseInit(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseInit_t)();
@@ -35,7 +35,7 @@ Handle<Value> sixenseInit(const Arguments& args) {
 Handle<Value> sixenseExit(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseExit_t)();
@@ -58,7 +58,7 @@ Handle<Value> sixenseExit(const Arguments& args) {
 Handle<Value> sixenseGetMaxBases(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseGetMaxBases_t)();
@@ -76,7 +76,7 @@ Handle<Value> sixenseGetMaxBases(const Arguments& args) {
 Handle<Value> sixenseSetActiveBase(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseSetActiveBase_t)(int base_num);
@@ -103,7 +103,7 @@ Handle<Value> sixenseSetActiveBase(const Arguments& args) {
 Handle<Value> sixenseIsBaseConnected(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseIsBaseConnected_t)(int base_num);
@@ -122,11 +122,11 @@ Handle<Value> sixenseIsBaseConnected(const Arguments& args) {
     return scope.Close(Number::New(sixenseIsBaseConnected(args[0]->NumberValue())));
 }
 
-Handle<Value> sixenseGetMaxControllers(const Arguments& args) {
+int sixenseGetMaxControllersLocal() {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
-        return scope.Close(Undefined());
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return -2;
     }
     typedef int (*sixenseGetMaxControllers_t)();
     dlerror();
@@ -135,15 +135,25 @@ Handle<Value> sixenseGetMaxControllers(const Arguments& args) {
     if (dlsym_error) {
         dlclose(handle);
         ThrowException(Exception::Error(String::New("sixenseGetMaxControllers not found")));
-        return scope.Close(Undefined());
+        return -2;
     }
-    return scope.Close(Number::New(sixenseGetMaxControllers()));
+    return sixenseGetMaxControllers();
+}
+Handle<Value> sixenseGetMaxControllers(const Arguments& args) {
+    HandleScope scope;
+    int result = sixenseGetMaxControllersLocal();
+    if (result != -2) {
+   		return scope.Close(Number::New(result));
+    }
+    else {
+    	return scope.Close(Undefined());
+    }
 }
 
 Handle<Value> sixenseGetNumActiveControllers(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseGetNumActiveControllers_t)();
@@ -161,7 +171,7 @@ Handle<Value> sixenseGetNumActiveControllers(const Arguments& args) {
 Handle<Value> sixenseIsControllerEnabled(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseIsControllerEnabled_t)(int which);
@@ -253,8 +263,8 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
 }
 v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_data) {
     v8::Local<v8::Array> arr = Array::New();
-    //TODO: need to use sixenseGetMaxControllers, not hardcoded 4
-    for (unsigned int i = 0; i < 4; i++) {
+    int maxControllers = sixenseGetMaxControllersLocal();
+    for (unsigned int i = 0; i < maxControllers; i++) {
         arr->Set(i, parseSixenseControllerData(all_data.controllers[i]));
     }
     return arr;
@@ -263,7 +273,7 @@ v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_
 Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
     HandleScope scope;
     if (!handle) {
-        ThrowException(Exception::Error(String::New("Can't find './SixenseSDK/libsixense_x64.so'")));
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
     typedef int (*sixenseGetAllNewestData_t)(sixenseAllControllerData& all_data);
@@ -284,7 +294,350 @@ Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
     return scope.Close(parseSixenseAllControllerData(all_data));
 }
 
+Handle<Value> sixenseGetAllData(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetAllData_t)(int index_back, sixenseAllControllerData& all_data);
+    dlerror();
+    sixenseGetAllData_t sixenseGetAllData = (sixenseGetAllData_t) dlsym(handle, "sixenseGetAllData");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetAllData not found")));
+        return scope.Close(Undefined());
+    }
+    sixenseAllControllerData all_data;
+    if (args.Length() != 1) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllData(int index_back)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseGetAllData(args[0]->NumberValue(), all_data);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(parseSixenseAllControllerData(all_data));
+}
+
+Handle<Value> sixenseGetNewestData(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetNewestData_t)(int which, sixenseControllerData& con_data);
+    dlerror();
+    sixenseGetNewestData_t sixenseGetNewestData = (sixenseGetNewestData_t) dlsym(handle, "sixenseGetNewestData");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetNewestData not found")));
+        return scope.Close(Undefined());
+    }
+    sixenseControllerData con_data;
+    if (args.Length() != 1) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetNewestData(int which)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseGetNewestData(args[0]->NumberValue(), con_data);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(parseSixenseControllerData(con_data));
+}
+
+Handle<Value> sixenseGetHistorySize(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetHistorySize_t)();
+    dlerror();
+    sixenseGetHistorySize_t sixenseGetHistorySize = (sixenseGetHistorySize_t) dlsym(handle, "sixenseGetHistorySize");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetHistorySize not found")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(sixenseGetHistorySize()));
+}
+
+Handle<Value> sixenseSetFilterEnabled(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseSetFilterEnabled_t)(int on_or_off);
+    dlerror();
+    sixenseSetFilterEnabled_t sixenseSetFilterEnabled = (sixenseSetFilterEnabled_t) dlsym(handle, "sixenseSetFilterEnabled");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseSetFilterEnabled not found")));
+        return scope.Close(Undefined());
+    }
+    if (args.Length() != 1) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetFilterEnabled(int on_or_off)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseSetFilterEnabled(args[0]->NumberValue());
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(result));
+}
+
+Handle<Value> sixenseGetFilterEnabled(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetFilterEnabled_t)(int& on_or_off);
+    dlerror();
+    sixenseGetFilterEnabled_t sixenseGetFilterEnabled = (sixenseGetFilterEnabled_t) dlsym(handle, "sixenseGetFilterEnabled");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetFilterEnabled not found")));
+        return scope.Close(Undefined());
+    }
+    int on_or_off;
+    int result = sixenseGetFilterEnabled(on_or_off);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(on_or_off));
+}
+
+Handle<Value> sixenseSetFilterParams(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseSetFilterParams_t)(float near_range, float near_val, float far_range, float far_val);
+    dlerror();
+    sixenseSetFilterParams_t sixenseSetFilterParams = (sixenseSetFilterParams_t) dlsym(handle, "sixenseSetFilterParams");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseSetFilterParams not found")));
+        return scope.Close(Undefined());
+    }
+    if (args.Length() != 4) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetFilterParams(float near_range, float near_val, float far_range, float far_val)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseSetFilterParams(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue(), args[3]->NumberValue());
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(result));
+}
+
+Handle<Value> sixenseGetFilterParams(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetFilterParams_t)(float& near_range, float& near_val, float& far_range, float& far_val);
+    dlerror();
+    sixenseGetFilterParams_t sixenseGetFilterParams = (sixenseGetFilterParams_t) dlsym(handle, "sixenseGetFilterParams");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetFilterParams not found")));
+        return scope.Close(Undefined());
+    }
+    float near_range;
+    float near_val;
+    float far_range;
+    float far_val;
+    int result = sixenseGetFilterParams(near_range, near_val, far_range, far_val);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    v8::Local<v8::Object> filterParams = Object::New();
+
+    v8::Local<v8::Object> range = Object::New();
+    range->Set(String::NewSymbol("near"), Number::New(near_range));
+    range->Set(String::NewSymbol("far"), Number::New(far_range));
+
+    v8::Local<v8::Object> value = Object::New();
+    value->Set(String::NewSymbol("near"), Number::New(near_val));
+    value->Set(String::NewSymbol("far"), Number::New(far_val));
+
+    filterParams->Set(String::NewSymbol("range"), range);
+    filterParams->Set(String::NewSymbol("value"), value);
+    return scope.Close(filterParams);
+}
+
+Handle<Value> sixenseTriggerVibration(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseTriggerVibration_t)(int controller_id, int duration_100ms, int pattern_id);
+    dlerror();
+    sixenseTriggerVibration_t sixenseTriggerVibration = (sixenseTriggerVibration_t) dlsym(handle, "sixenseTriggerVibration");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseTriggerVibration not found")));
+        return scope.Close(Undefined());
+    }
+    if (args.Length() != 3) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseTriggerVibration(int controller_id, int duration_100ms, int pattern_id)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseTriggerVibration(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(result));
+}
+
+Handle<Value> sixenseSetHighPriorityBindingEnabled(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseSetHighPriorityBindingEnabled_t)(int on_or_off);
+    dlerror();
+    sixenseSetHighPriorityBindingEnabled_t sixenseSetHighPriorityBindingEnabled = (sixenseSetHighPriorityBindingEnabled_t) dlsym(handle, "sixenseSetHighPriorityBindingEnabled");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseSetHighPriorityBindingEnabled not found")));
+        return scope.Close(Undefined());
+    }
+    if (args.Length() != 1) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetHighPriorityBindingEnabled(int on_or_off)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseSetHighPriorityBindingEnabled(args[0]->NumberValue());
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(result));
+}
+
+Handle<Value> sixenseGetHighPriorityBindingEnabled(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetHighPriorityBindingEnabled_t)(int& on_or_off);
+    dlerror();
+    sixenseGetHighPriorityBindingEnabled_t sixenseGetHighPriorityBindingEnabled = (sixenseGetHighPriorityBindingEnabled_t) dlsym(handle, "sixenseGetHighPriorityBindingEnabled");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetHighPriorityBindingEnabled not found")));
+        return scope.Close(Undefined());
+    }
+    int on_or_off;
+    int result = sixenseGetHighPriorityBindingEnabled(on_or_off);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(on_or_off));
+}
+
+Handle<Value> sixenseSetBaseColor(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseSetBaseColor_t)(unsigned char red, unsigned char green, unsigned char blue);
+    dlerror();
+    sixenseSetBaseColor_t sixenseSetBaseColor = (sixenseSetBaseColor_t) dlsym(handle, "sixenseSetBaseColor");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseSetBaseColor not found")));
+        return scope.Close(Undefined());
+    }
+    if (args.Length() != 3) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetBaseColor(unsigned char red, unsigned char green, unsigned char blue)")));
+        return scope.Close(Undefined());
+    }
+    int result = sixenseSetBaseColor(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    return scope.Close(Number::New(result));
+}
+
+Handle<Value> sixenseGetBaseColor(const Arguments& args) {
+    HandleScope scope;
+    if (!handle) {
+        ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
+        return scope.Close(Undefined());
+    }
+    typedef int (*sixenseGetBaseColor_t)(unsigned char& red, unsigned char& green, unsigned char& blue);
+    dlerror();
+    sixenseGetBaseColor_t sixenseGetBaseColor = (sixenseGetBaseColor_t) dlsym(handle, "sixenseGetBaseColor");
+    const char *dlsym_error = dlerror();
+    if (dlsym_error) {
+        dlclose(handle);
+        ThrowException(Exception::Error(String::New("sixenseGetBaseColor not found")));
+        return scope.Close(Undefined());
+    }
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
+    int result = sixenseGetBaseColor(red, green, blue);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return scope.Close(Undefined());
+    }
+    v8::Local<v8::Object> rgb = Object::New();
+    rgb->Set(String::NewSymbol("red"), Number::New(red));
+    rgb->Set(String::NewSymbol("green"), Number::New(green));
+    rgb->Set(String::NewSymbol("blue"), Number::New(blue));
+    return scope.Close(rgb);
+}
+
 void init(Handle<Object> exports) {
+	v8::Local<v8::Object> consts = Object::New();
+	
+	consts->Set(String::NewSymbol("success"), Number::New(SIXENSE_SUCCESS));
+	consts->Set(String::NewSymbol("failure"), Number::New(SIXENSE_FAILURE));
+
+	v8::Local<v8::Object> buttons = Object::New();
+	buttons->Set(String::NewSymbol("button1"), Number::New(SIXENSE_BUTTON_1));
+	buttons->Set(String::NewSymbol("button2"), Number::New(SIXENSE_BUTTON_2));
+	buttons->Set(String::NewSymbol("button3"), Number::New(SIXENSE_BUTTON_3));
+	buttons->Set(String::NewSymbol("button4"), Number::New(SIXENSE_BUTTON_4));
+	buttons->Set(String::NewSymbol("start"), Number::New(SIXENSE_BUTTON_START));
+	buttons->Set(String::NewSymbol("bumper"), Number::New(SIXENSE_BUTTON_BUMPER));
+	buttons->Set(String::NewSymbol("joystick"), Number::New(SIXENSE_BUTTON_JOYSTICK));
+	consts->Set(String::NewSymbol("buttons"), buttons);
+
+	exports->Set(String::NewSymbol("sixenseConstants"), consts);
+
     exports->Set(String::NewSymbol("sixenseInit"), FunctionTemplate::New(sixenseInit)->GetFunction());
     exports->Set(String::NewSymbol("sixenseExit"), FunctionTemplate::New(sixenseExit)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetMaxBases"), FunctionTemplate::New(sixenseGetMaxBases)->GetFunction());
@@ -294,6 +647,18 @@ void init(Handle<Object> exports) {
     exports->Set(String::NewSymbol("sixenseGetNumActiveControllers"), FunctionTemplate::New(sixenseGetNumActiveControllers)->GetFunction());
     exports->Set(String::NewSymbol("sixenseIsControllerEnabled"), FunctionTemplate::New(sixenseIsControllerEnabled)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllNewestData"), FunctionTemplate::New(sixenseGetAllNewestData)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetAllData"), FunctionTemplate::New(sixenseGetAllData)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetNewestData"), FunctionTemplate::New(sixenseGetNewestData)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetHistorySize"), FunctionTemplate::New(sixenseGetHistorySize)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseSetFilterEnabled"), FunctionTemplate::New(sixenseSetFilterEnabled)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetFilterEnabled"), FunctionTemplate::New(sixenseGetFilterEnabled)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseSetFilterParams"), FunctionTemplate::New(sixenseSetFilterParams)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetFilterParams"), FunctionTemplate::New(sixenseGetFilterParams)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseTriggerVibration"), FunctionTemplate::New(sixenseTriggerVibration)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseSetHighPriorityBindingEnabled"), FunctionTemplate::New(sixenseSetHighPriorityBindingEnabled)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetHighPriorityBindingEnabled"), FunctionTemplate::New(sixenseGetHighPriorityBindingEnabled)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseSetBaseColor"), FunctionTemplate::New(sixenseSetBaseColor)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetBaseColor"), FunctionTemplate::New(sixenseGetBaseColor)->GetFunction());
 }
 
 NODE_MODULE(sixense, init)
