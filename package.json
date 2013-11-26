@@ -1,6 +1,6 @@
 {
   "name": "node-sixense",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Tyson Hester <ironman9967@gmail.com>",
   "description": "A NodeJS addon/port of the Sixense SDK for \"six-degress-of-freedom\" controllers.",
   "contributors": [
@@ -21,10 +21,6 @@
   ],
   "analyze": false,
   "license": "MIT",
-  "scripts": {
-    "install": "node-gyp rebuild"
-  },
-  "gypfile": true,
   "homepage": "https://github.com/ironman9967/NodeSixense",
   "main": "node-sixense.js"
 }
