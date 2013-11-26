@@ -19,9 +19,6 @@
     "Nodejs",
     "VR"
   ],
-  "scripts": {
-	  "preinstall": ""
-  },
   "analyze": false,
   "license": "MIT",
   "homepage": "https://github.com/ironman9967/NodeSixense",
