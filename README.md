@@ -4,13 +4,6 @@ NodeSixense
 **Description:**<br>
 A NodeJS addon/port of the Sixense SDK for "six-degress-of-freedom" controllers, such as the Razer Hydra. Currently, Windows is not supported and a 64-bit machine is required.
 
-**Prequisites:**<br>
-1. node-gyp installed globally: 'sudo npm install -g node-gyp'<br>
-2. The 'sixense.h' file needs to by copied into the './SixenseSDK' folder. Under Sixense's license, I cannot provide this file for you.
-
-**Build Instructions:**<br>
-From the directory of the project, execute 'sudo node-gyp rebuild'.
-
 **Documentation:**<br>
 Refer to the 'Sixense_SDK_Reference.pdf' and 'Sixense_SDK_Overview.pdf' available from Sixense's website for instructions on how to uilize the available methods.
 
