@@ -1,4 +1,39 @@
 {
 	"name": "NodeSixense",
-	"version": "0.0.1"
+	"version": "0.0.1",
+	"author": "Tyson Hester <ironman9967@gmail.com>",
+	"description": "A NodeJS port of the Sixense SDK for \"six-degress-of-freedom\" controllers.",
+	"contributors": [
+		{
+			"name": "Tyson Hester",
+			"email": "ironman9967@gmail.com"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ironman9967/NodeSixense.git"
+	},
+	"bugs": {
+		"url":"https://github.com/ironman9967/NodeSixense/issues"
+	},
+	"os": [
+		"linux",
+		"OSX",
+		"!win32"
+	],
+	"cpu": [
+		"x64",
+		"!ia32"
+	],
+	"keywords": [
+		"Sixense",
+		"six-degrees-of-freedom",
+		"Nodejs",
+		"VR"
+	],
+	"analyze": false,
+	"license": "MIT",
+	"engines": {
+		"node": ">=0.10"
+	}
 }
