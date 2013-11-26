@@ -5,6 +5,8 @@
 #include <dlfcn.h>
 #include "./SixenseSDK/sixense.h"
 
+#include <time.h>
+
 using namespace v8;
 
 void* handle = dlopen("./SixenseSDK/libsixense_x64.so", RTLD_NOW);
@@ -307,7 +309,7 @@ Handle<Value> sixenseGetAllNewestDataPump(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllNewestDataPump(function cb(all_data))")));
         return scope.Close(Undefined());
     }
-	for (int i = 0; i < 2; i++) {
+	while (1) {
 		sixenseAllControllerData all_data;
     	int result = sixenseGetAllNewestDataLocal(all_data);
     	if (result != SIXENSE_SUCCESS) {
@@ -318,6 +320,10 @@ Handle<Value> sixenseGetAllNewestDataPump(const Arguments& args) {
     	const unsigned argc = 1;
     	Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
     	cb->Call(Context::GetCurrent()->Global(), argc, argv);
+    	timespec req;
+    	req.tv_nsec = 16666666;
+    	req.tv_sec = 0;
+    	nanosleep(&req, NULL);
 	}
     return scope.Close(Undefined());
 }
