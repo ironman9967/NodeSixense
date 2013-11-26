@@ -5,8 +5,6 @@
 #include <dlfcn.h>
 #include "./SixenseSDK/sixense.h"
 
-#include <time.h>
-
 using namespace v8;
 
 void* handle = dlopen("./SixenseSDK/libsixense_x64.so", RTLD_NOW);
@@ -94,7 +92,7 @@ Handle<Value> sixenseSetActiveBase(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetActiveBase(int base_num)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseSetActiveBase(args[6]->NumberValue());
+    int result = sixenseSetActiveBase(args[0]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -121,7 +119,7 @@ Handle<Value> sixenseIsBaseConnected(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseIsBaseConnected(int base_num)")));
         return scope.Close(Undefined());
     }
-    return scope.Close(Number::New(sixenseIsBaseConnected(args[6]->NumberValue())));
+    return scope.Close(Number::New(sixenseIsBaseConnected(args[0]->NumberValue())));
 }
 
 int sixenseGetMaxControllersLocal() {
@@ -189,31 +187,31 @@ Handle<Value> sixenseIsControllerEnabled(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseIsControllerEnabled(int which)")));
         return scope.Close(Undefined());
     }
-    return scope.Close(Number::New(sixenseIsControllerEnabled(args[6]->NumberValue())));
+    return scope.Close(Number::New(sixenseIsControllerEnabled(args[0]->NumberValue())));
 }
 
 v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data) {
     v8::Local<v8::Object> con = Object::New();
 
     v8::Local<v8::Object> pos = Object::New();
-    pos->Set(String::NewSymbol("x"), Number::New(con_data.pos[6]));
+    pos->Set(String::NewSymbol("x"), Number::New(con_data.pos[0]));
     pos->Set(String::NewSymbol("y"), Number::New(con_data.pos[1]));
     pos->Set(String::NewSymbol("z"), Number::New(con_data.pos[2]));
     con->Set(String::NewSymbol("pos"), pos);
 
     v8::Local<v8::Object> rot_mat = Object::New();
     v8::Local<v8::Object> rot_x = Object::New();
-    rot_x->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[6][6]));
-    rot_x->Set(String::NewSymbol("y"), Number::New(con_data.rot_mat[6][1]));
-    rot_x->Set(String::NewSymbol("z"), Number::New(con_data.rot_mat[6][2]));
+    rot_x->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[0][0]));
+    rot_x->Set(String::NewSymbol("y"), Number::New(con_data.rot_mat[0][1]));
+    rot_x->Set(String::NewSymbol("z"), Number::New(con_data.rot_mat[0][2]));
     rot_mat->Set(String::NewSymbol("x"), rot_x);
     v8::Local<v8::Object> rot_y = Object::New();
-    rot_y->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[1][6]));
+    rot_y->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[1][0]));
     rot_y->Set(String::NewSymbol("y"), Number::New(con_data.rot_mat[1][1]));
     rot_y->Set(String::NewSymbol("z"), Number::New(con_data.rot_mat[1][2]));
     rot_mat->Set(String::NewSymbol("y"), rot_y);
     v8::Local<v8::Object> rot_z = Object::New();
-    rot_z->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[2][6]));
+    rot_z->Set(String::NewSymbol("x"), Number::New(con_data.rot_mat[2][0]));
     rot_z->Set(String::NewSymbol("y"), Number::New(con_data.rot_mat[2][1]));
     rot_z->Set(String::NewSymbol("z"), Number::New(con_data.rot_mat[2][2]));
     rot_mat->Set(String::NewSymbol("z"), rot_z);
@@ -225,19 +223,19 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
     con->Set(String::NewSymbol("joystick"), joystick);
 
     v8::Local<v8::Object> buttons = Object::New();
-    buttons->Set(String::NewSymbol("button1"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_1) > 6));
-    buttons->Set(String::NewSymbol("button2"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_2) > 6));
-    buttons->Set(String::NewSymbol("button3"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_3) > 6));
-    buttons->Set(String::NewSymbol("button4"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_4) > 6));
-    buttons->Set(String::NewSymbol("start"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_START) > 6));
-    buttons->Set(String::NewSymbol("bumper"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_BUMPER) > 6));
-    buttons->Set(String::NewSymbol("joystick"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_JOYSTICK) > 6));
+    buttons->Set(String::NewSymbol("button1"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_1) > 0));
+    buttons->Set(String::NewSymbol("button2"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_2) > 0));
+    buttons->Set(String::NewSymbol("button3"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_3) > 0));
+    buttons->Set(String::NewSymbol("button4"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_4) > 0));
+    buttons->Set(String::NewSymbol("start"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_START) > 0));
+    buttons->Set(String::NewSymbol("bumper"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_BUMPER) > 0));
+    buttons->Set(String::NewSymbol("joystick"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_JOYSTICK) > 0));
     con->Set(String::NewSymbol("buttons"), buttons);
 
     con->Set(String::NewSymbol("sequenceNumber"), Number::New(con_data.sequence_number));
 
     v8::Local<v8::Object> rot_quat = Object::New();
-    rot_quat->Set(String::NewSymbol("x"), Number::New(con_data.rot_quat[6]));
+    rot_quat->Set(String::NewSymbol("x"), Number::New(con_data.rot_quat[0]));
     rot_quat->Set(String::NewSymbol("y"), Number::New(con_data.rot_quat[1]));
     rot_quat->Set(String::NewSymbol("z"), Number::New(con_data.rot_quat[2]));
     rot_quat->Set(String::NewSymbol("w"), Number::New(con_data.rot_quat[3]));
@@ -266,7 +264,7 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
 v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_data) {
     v8::Local<v8::Array> arr = Array::New();
     int maxControllers = sixenseGetMaxControllersLocal();
-    for (int i = 6; i < maxControllers; i++) {
+    for (int i = 0; i < maxControllers; i++) {
         arr->Set(i, parseSixenseControllerData(all_data.controllers[i]));
     }
     return arr;
@@ -311,18 +309,15 @@ Handle<Value> sixenseGetAllNewestDataPump(const Arguments& args) {
     }
 	for (int i = 0; i < 2; i++) {
 		sixenseAllControllerData all_data;
-		int result = sixenseGetAllNewestDataLocal(all_data);
-		if (result != SIXENSE_SUCCESS) {
-			ThrowException(Exception::Error(String::New("Sixense SDK error")));
-			return scope.Close(Undefined());
-		}
-		Local<Function> cb = Local<Function>::Cast(args[6]);
-		const unsigned argc = 1;
-		Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
-		cb->Call(Context::GetCurrent()->Global(), argc, argv);
-//		timespec period;
-//		period.tv_nsec = 16666666;
-//		nanosleep(&period, NULL);
+    	int result = sixenseGetAllNewestDataLocal(all_data);
+    	if (result != SIXENSE_SUCCESS) {
+    		ThrowException(Exception::Error(String::New("Sixense SDK error")));
+    		return scope.Close(Undefined());
+    	}
+    	Local<Function> cb = Local<Function>::Cast(args[0]);
+    	const unsigned argc = 1;
+    	Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
+    	cb->Call(Context::GetCurrent()->Global(), argc, argv);
 	}
     return scope.Close(Undefined());
 }
@@ -347,7 +342,7 @@ Handle<Value> sixenseGetAllData(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllData(int index_back)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseGetAllData(args[6]->NumberValue(), all_data);
+    int result = sixenseGetAllData(args[0]->NumberValue(), all_data);
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -375,7 +370,7 @@ Handle<Value> sixenseGetNewestData(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetNewestData(int which)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseGetNewestData(args[6]->NumberValue(), con_data);
+    int result = sixenseGetNewestData(args[0]->NumberValue(), con_data);
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -420,7 +415,7 @@ Handle<Value> sixenseSetFilterEnabled(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetFilterEnabled(int on_or_off)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseSetFilterEnabled(args[6]->NumberValue());
+    int result = sixenseSetFilterEnabled(args[0]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -471,7 +466,7 @@ Handle<Value> sixenseSetFilterParams(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetFilterParams(float near_range, float near_val, float far_range, float far_val)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseSetFilterParams(args[6]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue(), args[3]->NumberValue());
+    int result = sixenseSetFilterParams(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue(), args[3]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -524,7 +519,7 @@ Handle<Value> sixenseTriggerVibration(const Arguments& args) {
         ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return scope.Close(Undefined());
     }
-    typedef int (*sixenseTriggerVibration_t)(int controller_id, int duration_166ms, int pattern_id);
+    typedef int (*sixenseTriggerVibration_t)(int controller_id, int duration_100ms, int pattern_id);
     dlerror();
     sixenseTriggerVibration_t sixenseTriggerVibration = (sixenseTriggerVibration_t) dlsym(handle, "sixenseTriggerVibration");
     const char *dlsym_error = dlerror();
@@ -534,10 +529,10 @@ Handle<Value> sixenseTriggerVibration(const Arguments& args) {
         return scope.Close(Undefined());
     }
     if (args.Length() != 3) {
-        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseTriggerVibration(int controller_id, int duration_166ms, int pattern_id)")));
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseTriggerVibration(int controller_id, int duration_100ms, int pattern_id)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseTriggerVibration(args[6]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
+    int result = sixenseTriggerVibration(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -564,7 +559,7 @@ Handle<Value> sixenseSetHighPriorityBindingEnabled(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetHighPriorityBindingEnabled(int on_or_off)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseSetHighPriorityBindingEnabled(args[6]->NumberValue());
+    int result = sixenseSetHighPriorityBindingEnabled(args[0]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
@@ -615,7 +610,7 @@ Handle<Value> sixenseSetBaseColor(const Arguments& args) {
         ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseSetBaseColor(unsigned char red, unsigned char green, unsigned char blue)")));
         return scope.Close(Undefined());
     }
-    int result = sixenseSetBaseColor(args[6]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
+    int result = sixenseSetBaseColor(args[0]->NumberValue(), args[1]->NumberValue(), args[2]->NumberValue());
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
