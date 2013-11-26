@@ -270,11 +270,10 @@ v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_
     return arr;
 }
 
-Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
-    HandleScope scope;
+int sixenseGetAllNewestDataLocal(sixenseAllControllerData& all_data) {
     if (!handle) {
         ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
-        return scope.Close(Undefined());
+        return SIXENSE_FAILURE;
     }
     typedef int (*sixenseGetAllNewestData_t)(sixenseAllControllerData& all_data);
     dlerror();
@@ -283,15 +282,44 @@ Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
     if (dlsym_error) {
         dlclose(handle);
         ThrowException(Exception::Error(String::New("sixenseGetAllNewestData not found")));
-        return scope.Close(Undefined());
+        return SIXENSE_FAILURE;
     }
-    sixenseAllControllerData all_data;
     int result = sixenseGetAllNewestData(all_data);
+    if (result != SIXENSE_SUCCESS) {
+        ThrowException(Exception::Error(String::New("Sixense SDK error")));
+        return SIXENSE_FAILURE;
+    }
+    return SIXENSE_SUCCESS;
+}
+Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
+    HandleScope scope;
+    sixenseAllControllerData all_data;
+    int result = sixenseGetAllNewestDataLocal(all_data);
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
     }
     return scope.Close(parseSixenseAllControllerData(all_data));
+}
+Handle<Value> sixenseGetAllNewestDataPump(const Arguments& args) {
+	HandleScope scope;
+    if (args.Length() != 1) {
+        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllNewestDataPump(function cb(all_data))")));
+        return scope.Close(Undefined());
+    }
+	for (int i = 0; i < 2; i++) {
+		sixenseAllControllerData all_data;
+		int result = sixenseGetAllNewestDataLocal(all_data);
+		if (result != SIXENSE_SUCCESS) {
+			ThrowException(Exception::Error(String::New("Sixense SDK error")));
+			return scope.Close(Undefined());
+		}
+		Local<Function> cb = Local<Function>::Cast(args[0]);
+		const unsigned argc = 1;
+		Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
+		cb->Call(Context::GetCurrent()->Global(), argc, argv);
+	}
+    return scope.Close(Undefined());
 }
 
 Handle<Value> sixenseGetAllData(const Arguments& args) {
@@ -647,6 +675,7 @@ void init(Handle<Object> exports) {
     exports->Set(String::NewSymbol("sixenseGetNumActiveControllers"), FunctionTemplate::New(sixenseGetNumActiveControllers)->GetFunction());
     exports->Set(String::NewSymbol("sixenseIsControllerEnabled"), FunctionTemplate::New(sixenseIsControllerEnabled)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllNewestData"), FunctionTemplate::New(sixenseGetAllNewestData)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetAllNewestDataPump"), FunctionTemplate::New(sixenseGetAllNewestDataPump)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllData"), FunctionTemplate::New(sixenseGetAllData)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetNewestData"), FunctionTemplate::New(sixenseGetNewestData)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetHistorySize"), FunctionTemplate::New(sixenseGetHistorySize)->GetFunction());
