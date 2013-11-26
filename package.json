@@ -16,15 +16,6 @@
 	"bugs": {
 		"url":"https://github.com/ironman9967/NodeSixense/issues"
 	},
-	"os": [
-		"linux",
-		"OSX",
-		"!win32"
-	],
-	"cpu": [
-		"x64",
-		"!ia32"
-	],
 	"keywords": [
 		"Sixense",
 		"six-degrees-of-freedom",
@@ -32,8 +23,5 @@
 		"VR"
 	],
 	"analyze": false,
-	"license": "MIT",
-	"engines": {
-		"node": "*"
-	}
+	"license": "MIT"
 }
