@@ -1,2 +1,11 @@
 
 .idea/
+
+NodeSixense.iws
+
+test.js
+testAll.js
+
+build/
+
+node_modules/
