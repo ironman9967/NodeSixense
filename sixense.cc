@@ -60,6 +60,7 @@ Handle<Value> sixenseExit(const Arguments& args) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
     }
+    dlclose(handle);
     return scope.Close(Number::New(result));
 }
 
@@ -296,12 +297,12 @@ v8::Local<v8::Array> parseSixenseAllControllerData(sixenseAllControllerData all_
     return arr;
 }
 
-int sixenseGetAllNewestDataLocal(sixenseAllControllerData& all_data) {
+int sixenseGetAllNewestDataLocal(sixenseAllControllerData* all_data) {
     if (!handle) {
         ThrowException(Exception::Error(String::New("can't find './SixenseSDK/libsixense_x64.so'")));
         return SIXENSE_FAILURE;
     }
-    typedef int (*sixenseGetAllNewestData_t)(sixenseAllControllerData& all_data);
+    typedef int (*sixenseGetAllNewestData_t)(sixenseAllControllerData* all_data);
     dlerror();
     sixenseGetAllNewestData_t sixenseGetAllNewestData = (sixenseGetAllNewestData_t) dlsym(handle, "sixenseGetAllNewestData");
     const char *dlsym_error = dlerror();
@@ -322,34 +323,36 @@ int sixenseGetAllNewestDataLocal(sixenseAllControllerData& all_data) {
 }
 Handle<Value> sixenseGetAllNewestData(const Arguments& args) {
     HandleScope scope;
-    sixenseAllControllerData all_data;
+    sixenseAllControllerData *all_data = new sixenseAllControllerData;
     int result = sixenseGetAllNewestDataLocal(all_data);
     if (result != SIXENSE_SUCCESS) {
         ThrowException(Exception::Error(String::New("Sixense SDK error")));
         return scope.Close(Undefined());
     }
-    return scope.Close(parseSixenseAllControllerData(all_data));
+    v8::Local<v8::Object> allDataObj = parseSixenseAllControllerData(*all_data);
+    delete all_data;
+    return scope.Close(allDataObj);
 }
 Handle<Value> sixenseGetAllNewestDataPoll(const Arguments& args) {
 	HandleScope scope;
-    if (args.Length() != 1) {
-        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllNewestDataPoll(function cb(all_data))")));
-        return scope.Close(Undefined());
-    }
-	sixenseAllControllerData all_data;
-	int result = sixenseGetAllNewestDataLocal(all_data);
-	if (result != SIXENSE_SUCCESS) {
-		ThrowException(Exception::Error(String::New("Sixense SDK error")));
-		return scope.Close(Undefined());
-	}
-	Local<Function> cb = Local<Function>::Cast(args[0]);
-	const unsigned argc = 1;
-	Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
-	cb->Call(Context::GetCurrent()->Global(), argc, argv);
-	timespec req;
-	req.tv_nsec = 16666666;
-	req.tv_sec = 0;
-	nanosleep(&req, NULL);
+//    if (args.Length() != 1) {
+//        ThrowException(Exception::Error(String::New("bad signature, should be -> sixenseGetAllNewestDataPoll(function cb(all_data))")));
+//        return scope.Close(Undefined());
+//    }
+//	sixenseAllControllerData all_data;
+//	int result = sixenseGetAllNewestDataLocal(all_data);
+//	if (result != SIXENSE_SUCCESS) {
+//		ThrowException(Exception::Error(String::New("Sixense SDK error")));
+//		return scope.Close(Undefined());
+//	}
+//	Local<Function> cb = Local<Function>::Cast(args[0]);
+//	const unsigned argc = 1;
+//	Local<Value> argv[argc] = { Local<Value>::New(parseSixenseAllControllerData(all_data)) };
+//	cb->Call(Context::GetCurrent()->Global(), argc, argv);
+//	timespec req;
+//	req.tv_nsec = 16666666;
+//	req.tv_sec = 0;
+//	nanosleep(&req, NULL);
     return scope.Close(Undefined());
 }
 
