@@ -5,8 +5,7 @@ NodeSixense.iws
 
 .idea/dictionaries/
 
-test.js
-testAll.js
+test*.js
 
 build/
 

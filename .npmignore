@@ -3,8 +3,7 @@
 
 NodeSixense.iws
 
-test.js
-testAll.js
+test*.js
 
 build/
 
