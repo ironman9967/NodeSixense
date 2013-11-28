@@ -1,33 +1,33 @@
 {
-  "name": "node-sixense",
-  "version": "0.1.1",
-  "author": "Tyson Hester <ironman9967@gmail.com>",
-  "description": "A NodeJS addon/port of the Sixense SDK for \"six-degress-of-freedom\" controllers.",
-  "contributors": [
-    "Tyson Hester <ironman9967@gmail.com>"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ironman9967/NodeSixense.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ironman9967/NodeSixense/issues"
-  },
-  "keywords": [
-    "Sixense",
-    "six-degrees-of-freedom",
-	"controller",
-	"Razer",
-	"Hydra",
-    "Nodejs",
-    "VR"
-  ],
-  "analyze": false,
-  "license": "MIT",
-  "homepage": "https://github.com/ironman9967/NodeSixense",
-  "main": "node-sixense.js",
-  "scripts": {
-    "install": "node-gyp rebuild"
-  },
-  "gypfile": true
+	"name": "node-sixense",
+	"version": "0.1.1",
+	"author": "Tyson Hester <ironman9967@gmail.com>",
+	"description": "A NodeJS addon/port of the Sixense SDK for \"six-degress-of-freedom\" controllers.",
+	"contributors": [
+		"Tyson Hester <ironman9967@gmail.com>"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ironman9967/NodeSixense.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ironman9967/NodeSixense/issues"
+	},
+	"keywords": [
+		"Sixense",
+		"six-degrees-of-freedom",
+		"controller",
+		"Razer",
+		"Hydra",
+		"Nodejs",
+		"VR"
+	],
+	"analyze": false,
+	"license": "MIT",
+	"homepage": "https://github.com/ironman9967/NodeSixense",
+	"main": "node-sixense.js",
+	"scripts": {
+		"install": "node-gyp rebuild"
+	},
+	"gypfile": true
 }
