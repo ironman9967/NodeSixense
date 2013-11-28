@@ -2,6 +2,7 @@
 #include <node.h>
 #include <v8.h>
 
+#include <time.h>
 #include <dlfcn.h>
 #include "./SixenseSDK/sixense.h"
 
@@ -332,6 +333,7 @@ typedef struct AsyncGetAllNewestData {
 	int returnValue;
 	std::string errorMessage;
 } AsyncGetAllNewestData;
+int sixenseGetAllNewestDataReport = 0;
 
 void sixenseGetAllNewestDataWork(uv_work_t *req) {
 	AsyncGetAllNewestData *asyncData = (AsyncGetAllNewestData*) req->data;
@@ -366,6 +368,7 @@ void sixenseGetAllNewestDataAfter(uv_work_t *req) {
 	if (asyncData->returnValue != SIXENSE_SUCCESS) {
 		argv[0] = Exception::Error(String::New(asyncData->errorMessage.c_str()));
 		argv[1] = Undefined();
+		sixenseGetAllNewestDataReport = 0;
 	}
 	else {
 		argv[0] = Undefined();
@@ -374,11 +377,31 @@ void sixenseGetAllNewestDataAfter(uv_work_t *req) {
 	TryCatch try_catch;
 	asyncData->callback->Call(Context::GetCurrent()->Global(), 2, argv);
 	if (try_catch.HasCaught()) {
+		sixenseGetAllNewestDataReport = 0;
 		node::FatalException(try_catch);
 	}
-	asyncData->callback.Dispose();
-	delete asyncData;
-	delete req;
+	if (sixenseGetAllNewestDataReport > 0) {
+		timespec timer;
+		timer.tv_nsec = 16666666;
+		timer.tv_sec = 0;
+		nanosleep(&timer, NULL);
+		uv_queue_work (
+			uv_default_loop(),
+			req,
+			sixenseGetAllNewestDataWork,
+			(uv_after_work_cb) sixenseGetAllNewestDataAfter
+		);
+	}
+	else {
+		asyncData->callback.Dispose();
+		delete asyncData;
+		delete req;
+	}
+}
+Handle<Value> sixenseGetAllNewestDataAsyncStop(const Arguments& args) {
+	HandleScope scope;
+	sixenseGetAllNewestDataReport = 0;
+	return scope.Close(Undefined());
 }
 Handle<Value> sixenseGetAllNewestDataAsync(const Arguments& args) {
 	HandleScope scope;
@@ -394,6 +417,7 @@ Handle<Value> sixenseGetAllNewestDataAsync(const Arguments& args) {
 		Local<Function>::Cast(args[0])->Call(Context::GetCurrent()->Global(), 2, argv);
 		return scope.Close(Undefined());
 	}
+	sixenseGetAllNewestDataReport = 1;
 	uv_work_t *req = new uv_work_t;
 	AsyncGetAllNewestData *asyncData = new AsyncGetAllNewestData;
 	req->data = asyncData;
@@ -826,6 +850,7 @@ void init(Handle<Object> exports) {
     exports->Set(String::NewSymbol("sixenseIsControllerEnabled"), FunctionTemplate::New(sixenseIsControllerEnabled)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllNewestData"), FunctionTemplate::New(sixenseGetAllNewestData)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllNewestDataAsync"), FunctionTemplate::New(sixenseGetAllNewestDataAsync)->GetFunction());
+    exports->Set(String::NewSymbol("sixenseGetAllNewestDataAsyncStop"), FunctionTemplate::New(sixenseGetAllNewestDataAsyncStop)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetAllData"), FunctionTemplate::New(sixenseGetAllData)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetNewestData"), FunctionTemplate::New(sixenseGetNewestData)->GetFunction());
     exports->Set(String::NewSymbol("sixenseGetHistorySize"), FunctionTemplate::New(sixenseGetHistorySize)->GetFunction());

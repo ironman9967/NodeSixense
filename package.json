@@ -29,5 +29,11 @@
 	"scripts": {
 		"install": "node-gyp rebuild"
 	},
-	"gypfile": true
+	"gypfile": true,
+	"devDependencies": {
+		"memwatch":"*"
+	},
+	"dependencies": {
+		"lodash":"*"
+	}
 }
