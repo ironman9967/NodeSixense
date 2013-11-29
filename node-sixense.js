@@ -3,6 +3,7 @@ var util = require('util');
 var events = require('events');
 
 var _ = require('lodash');
+var async = require('async');
 
 var sixense = require('./build/Release/sixense');
 
@@ -12,86 +13,97 @@ function NodeSixense() {
 	}
 	events.EventEmitter.call(this);
 	_.extend(this, sixense);
-	this._setupEvents();
 }
 util.inherits(NodeSixense, events.EventEmitter);
 
-NodeSixense.prototype._setupEvents = function () {
-	var instance = this;
-	this.on('getAllNewestData', function (callback) {
-		instance.sixenseGetAllNewestDataAsync(callback);
-	});
-	this.on('stopGetAllNewestData', function (callback) {
-		instance.sixenseGetAllNewestDataAsyncStop();
-		callback();
-	});
-};
-
-//NodeSixense.prototype.emit = function () {
-//	if (arguments.length >= 2) {
-//		var eventName = arguments[0];
-//		if (eventName !== "removeListener") {
-//			var eventArguments = arguments.length === 2 ? [] : _.initial(_.rest(_.toArray(arguments), 1));
-//			var callback = arguments[arguments.length - 1];
-//			var sdkMethodName = "sixenseGet" + CapFirstLetter(eventName) + "Async";
-//			var sdkMethod = this[sdkMethodName];
-//			if (sdkMethod !== void 0) {
-//				var instance = this;
-//				sdkMethod.apply(this, eventArguments.concat([ function (error, data) {
-//					instance.emit(eventName, error, data);
-//				} ]));
-//			}
-//			else {
-//				callback(new Error(sdkMethodName + " not found"));
-//			}
-//		}
-//	}
-//	else {
-//		throw new Error("bad signature, should be -> emit(eventName, ...eventArgs, " +
-//			"function callback(error, data)");
-//	}
-//};
-
 var nodeSixense = new NodeSixense();
 
-//nodeSixense.on('newListener', function () {
-//	var instance = this;
-//	var eventName = arguments[0];
-//	if (eventName !== "removeListener") {
-//		var eventArguments = _.toArray(arguments);
-//		var callback = arguments[1];
-//
-//		console.log(eventArguments);
-//
-////		var sdkMethodName = "sixenseGet" + CapFirstLetter(eventName) + "Async";
-////		var sdkMethod = instance[sdkMethodName];
-////		if (sdkMethod !== void 0) {
-////			sdkMethod(function (error, data) {
-////				instance.emit(eventName, error, data);
-////			});
-////		}
-////		else {
-////			callback(new Error(sdkMethodName + " not found"));
-////		}
-//	}
-//});
-//nodeSixense.on('removeListener', function () {
-//	var instance = this;
-//	var eventName = arguments[0];
-//	if (eventName !== "newListener") {
-//		var sdkMethodName = "sixenseGet" + CapFirstLetter(eventName) + "AsyncStop";
-//		var sdkMethod = instance[sdkMethodName];
-//		if (sdkMethod !== void 0) {
-//			sdkMethod();
-//		}
-//		else {
-//			callback(new Error(sdkMethodName + " not found"));
-//		}
-//	}
-//});
+var syncing = false;
+var currentAllData = void 0;
+var previousAllData = void 0;
+
+nodeSixense.on('newListener', function (eventName) {
+	if (eventName !== "removeListener") {
+		if (!syncing) {
+			syncing = true;
+			var instance = this;
+			this.sixenseGetAllNewestDataAsync(function (error, data) {
+				if (error === void 0) {
+					previousAllData = currentAllData === void 0 ? data : currentAllData;
+					currentAllData = data;
+					var metaData = {
+						sequenceNumber: currentAllData.sequenceNumber,
+						firmwareRevision: currentAllData.firmwareRevision,
+						hardwareRevision: currentAllData.hardwareRevision,
+						packetType: currentAllData.packetType,
+						magneticFrequency: currentAllData.magneticFrequency,
+						enabled: currentAllData.enabled,
+						controllerIndex: currentAllData.controllerIndex,
+						isDocked: currentAllData.isDocked,
+						whichHand: currentAllData.whichHand,
+						hemisphereTrackingEnabled: currentAllData.hemisphereTrackingEnabled
+					};
+					var listeners = _.keys(_.omit(instance._events, 'newListener', 'removeListener'));
+					async.each(listeners, function (eventKey, callback) {
+						var eventData =
+							getEventKeyChainData(eventKey.split(":"), currentAllData, previousAllData);
+						if (eventData !== void 0) {
+							instance._events[eventKey](eventData, metaData);
+						}
+						callback();
+					}, function (asyncError) {
+						if (asyncError !== void 0 && asyncError !== null) {
+							throw asyncError;
+						}
+					});
+				}
+				else {
+					this.sixenseGetAllNewestDataAsyncStop();
+					syncing = false;
+					throw error;
+				}
+			});
+		}
+	}
+});
+function getEventKeyChainData(eventKeyChain, current, previous) {
+	var eventData = void 0;
+	var currentEventKey = eventKeyChain.shift();
+	switch (currentEventKey) {
+		case 'controller':
+			var index = eventKeyChain.shift();
+			if (eventKeyChain.length === 0) {
+				eventData = current[index];
+			}
+			else {
+				return getEventKeyChainData(eventKeyChain, current[index], previous[index]);
+			}
+			break;
+		default:
+			if (eventKeyChain.length === 0) {
+				eventData = current[currentEventKey];
+			}
+			else if (eventKeyChain.length === 1) {
+				var currentData = current[currentEventKey][eventKeyChain[0]];
+				if (currentData !== previous[currentEventKey][eventKeyChain[0]]) {
+					eventData = {};
+					eventData[eventKeyChain[0]] = currentData;
+				}
+			}
+			else {
+				return getEventKeyChainData(eventKeyChain, current[currentEventKey],
+					previous[currentEventKey]);
+			}
+	}
+	return eventData;
+}
+nodeSixense.on('removeListener', function (eventName) {
+	if (eventName !== "newListener") {
+		if (_.keys(this._events).length === 2) {
+			this.sixenseGetAllNewestDataAsyncStop();
+			syncing = false;
+		}
+	}
+});
 
 module.exports = nodeSixense;
-
-function CapFirstLetter(str) {
-	return str.substring(0, 1).toUpperCase() + str.substring(1);
-}
