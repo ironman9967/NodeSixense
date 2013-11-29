@@ -81,7 +81,16 @@ function getEventKeyChainData(eventKeyChain, current, previous) {
 			break;
 		default:
 			if (eventKeyChain.length === 0) {
-				eventData = current[currentEventKey];
+				if (currentEventKey === "trigger") {
+					if (current[currentEventKey] !== previous[currentEventKey]) {
+						eventData = {
+							trigger: current[currentEventKey]
+						};
+					}
+				}
+				else {
+					eventData = current[currentEventKey];
+				}
 			}
 			else if (eventKeyChain.length === 1) {
 				var currentData = current[currentEventKey][eventKeyChain[0]];

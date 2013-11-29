@@ -249,6 +249,8 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
     joystick->Set(String::NewSymbol("y"), Number::New(con_data.joystick_y));
     con->Set(String::NewSymbol("joystick"), joystick);
 
+    con->Set(String::NewSymbol("trigger"), Number::New(con_data.trigger));
+
     v8::Local<v8::Object> buttons = Object::New();
     buttons->Set(String::NewSymbol("button1"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_1) > 0));
     buttons->Set(String::NewSymbol("button2"), Boolean::New((con_data.buttons & SIXENSE_BUTTON_2) > 0));
@@ -382,7 +384,8 @@ void sixenseGetAllNewestDataAfter(uv_work_t *req) {
 	}
 	if (sixenseGetAllNewestDataReport > 0) {
 		timespec timer;
-		timer.tv_nsec = 16666666;
+//		timer.tv_nsec = 16666666;
+		timer.tv_nsec = 100000;
 		timer.tv_sec = 0;
 		nanosleep(&timer, NULL);
 		uv_queue_work (
