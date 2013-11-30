@@ -14,13 +14,14 @@
 		"url": "https://github.com/ironman9967/NodeSixense/issues"
 	},
 	"keywords": [
-		"Sixense",
+		"sixense",
 		"six-degrees-of-freedom",
-		"controller",
-		"Razer",
-		"Hydra",
-		"Nodejs",
-		"VR"
+		"game-controller",
+		"razer",
+		"hydra",
+		"nodejs",
+		"vr",
+		"virtual-reality"
 	],
 	"analyze": false,
 	"license": "MIT",
