@@ -244,6 +244,13 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
     rot_mat->Set(String::NewSymbol("z"), rot_z);
     con->Set(String::NewSymbol("rotationMatrix"), rot_mat);
 
+    v8::Local<v8::Object> rot_quat = Object::New();
+    rot_quat->Set(String::NewSymbol("x"), Number::New(con_data.rot_quat[0]));
+    rot_quat->Set(String::NewSymbol("y"), Number::New(con_data.rot_quat[1]));
+    rot_quat->Set(String::NewSymbol("z"), Number::New(con_data.rot_quat[2]));
+    rot_quat->Set(String::NewSymbol("w"), Number::New(con_data.rot_quat[3]));
+    con->Set(String::NewSymbol("rotationQuaternion"), rot_quat);
+
     v8::Local<v8::Object> joystick = Object::New();
     joystick->Set(String::NewSymbol("x"), Number::New(con_data.joystick_x));
     joystick->Set(String::NewSymbol("y"), Number::New(con_data.joystick_y));
@@ -262,13 +269,6 @@ v8::Local<v8::Object> parseSixenseControllerData(sixenseControllerData con_data)
     con->Set(String::NewSymbol("buttons"), buttons);
 
     con->Set(String::NewSymbol("sequenceNumber"), Number::New(con_data.sequence_number));
-
-    v8::Local<v8::Object> rot_quat = Object::New();
-    rot_quat->Set(String::NewSymbol("x"), Number::New(con_data.rot_quat[0]));
-    rot_quat->Set(String::NewSymbol("y"), Number::New(con_data.rot_quat[1]));
-    rot_quat->Set(String::NewSymbol("z"), Number::New(con_data.rot_quat[2]));
-    rot_quat->Set(String::NewSymbol("w"), Number::New(con_data.rot_quat[3]));
-    con->Set(String::NewSymbol("rotationQuaternion"), rot_quat);
 
     con->Set(String::NewSymbol("firmwareRevision"), Number::New(con_data.firmware_revision));
 
