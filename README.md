@@ -8,17 +8,17 @@
 - --- <a href="https://github.com/ironman9967/NodeSixense/edit/DataCache/README.md#events">Events</a>
 - <a href="https://github.com/ironman9967/NodeSixense/edit/DataCache/README.md#license">License</a>
 <h2>Description:</h2>
-A NodeJS addon/port of the Sixense SDK for "six-degress-of-freedom" controllers, such as the Razer Hydra™.
+A NodeJS addon/port of the Sixense SDK for "six-degrees-of-freedom" controllers, such as the Razer Hydra™.
 <h2>Restrictions:</h2>
 1. Linux based OS
 2. 64-bit processor
-3. Currently, only one sixense base is supported.
+3. Currently only one sixense base is supported.
 <h2>Prequisites:</h2>
 1. node-gyp installed globally: <code>sudo npm install -g node-gyp</code>
 <h2>Documentation:</h2>
 Refer to the 'Sixense_SDK_Reference.pdf' and 'Sixense_SDK_Overview.pdf' available from Sixense's website for instructions on how to utilize the available SDK methods. All the Sixense SDK methods work as described.
 <h3>There are a few additional methods meant to make working with the module easier in JavaScript:</h3>
-<h6><code>sixenseInit()</code> and <code>sixenseSetActiveBase(0)</code> should be called before accessing any of the following mechanics. Once finished with these mechanics, <code>sixenseExit()</code> should be called.</h6>
+<h6><code>sixenseInit()</code> and <code>sixenseSetActiveBase(0)</code> should be called before accessing any of the following mechanics. Once finished with these mechanics <code>sixenseExit()</code> should be called.</h6>
 <h4><code>sixenseGetAllNewestDataAsync</code>:</h4>
 An asyncronous version of <code>sixenseGetAllNewestData</code>. This method accepts a callback that should accept <code>error</code> and <code>allData</code> parameters. The callback will be called every ~16.6ms (the refresh rate of the SixenseSDK). Once this method is invoked, you must call <code>sixenseGetAllNewestDataAsyncStop</code> in order to stop the module from executing the callback sent to <code>sixenseGetAllNewestDataAsync</code>.
 <h4><code>sixenseGetAllNewestDataAsyncStop</code>:</h4>
