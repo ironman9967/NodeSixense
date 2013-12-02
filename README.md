@@ -1,12 +1,12 @@
 <h1>NodeSixense</h1>
-- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#description">Description</a><br>
-- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#restrictions">Restrictions</a><br>
-- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#prequisites">Prequisites</a><br>
-- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#documentation">Documentation</a><br>
-- --- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#sixensegetallnewestdataasync"><code>sixenseGetAllNewestDataAsync</code></a><br>
-- --- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#sixensegetallnewestdataasyncstop"><code>sixenseGetAllNewestDataAsyncStop</code></a><br>
-- --- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#events">Events</a><br>
-- <a href="https://github.com/ironman9967/NodeSixense/edit/master/README.md#license">License</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#description">Description</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#restrictions">Restrictions</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#prequisites">Prequisites</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#documentation">Documentation</a><br>
+- --- <a href="https://github.com/ironman9967/NodeSixense#sixensegetallnewestdataasync"><code>sixenseGetAllNewestDataAsync</code></a><br>
+- --- <a href="https://github.com/ironman9967/NodeSixense#sixensegetallnewestdataasyncstop"><code>sixenseGetAllNewestDataAsyncStop</code></a><br>
+- --- <a href="https://github.com/ironman9967/NodeSixense#events">Events</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#license">License</a><br>
 <h2>Description:</h2>
 A NodeJS addon/port of the Sixense SDK for "six-degrees-of-freedom" controllers, such as the Razer Hydra™.
 <h2>Restrictions:</h2>
