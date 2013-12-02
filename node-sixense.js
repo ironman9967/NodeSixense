@@ -108,7 +108,9 @@ function getEventKeyChainData(eventKeyChain, current, previous) {
 }
 nodeSixense.on('removeListener', function (eventName) {
 	if (eventName !== "newListener") {
-		if (_.keys(this._events).length === 2) {
+		if (_.every(_.keys(this._events), function (eventKey) {
+			return eventKey === "removeListener" || eventKey === "newListener";
+		})) {
 			this.sixenseGetAllNewestDataAsyncStop();
 			syncing = false;
 		}
