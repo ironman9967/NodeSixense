@@ -11,8 +11,7 @@
 A NodeJS addon/port of the Sixense SDK for "six-degrees-of-freedom" controllers, such as the Razer Hydra™.
 <h2>Restrictions:</h2>
 1. Linux based OS<br>
-2. 64-bit processor<br>
-3. Currently only one sixense base is supported.<br>
+2. Currently only one sixense base is supported.<br>
 <h2>Prequisites:</h2>
 1. node-gyp installed globally: <code>sudo npm install -g node-gyp</code><br>
 <h2>Documentation:</h2>
