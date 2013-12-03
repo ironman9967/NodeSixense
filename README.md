@@ -23,7 +23,7 @@ An asyncronous version of <code>sixenseGetAllNewestData</code>. This method acce
 <h4><code>sixenseGetAllNewestDataAsyncStop</code>:</h4>
 This method is used to stop the execution of the callback sent <code>sixenseGetAllNewestDataAsync</code>. If <code>sixenseGetAllNewestDataAsync</code> hasn't been called, this method doesn't do anything.
 <h4>Events:</h4>
-<code>node-sixense</code> is a <code>EventEmitter</code> from the Nodejs event module. All listeners must be removed before exiting your application. All event callbacks should accept a <code>data</code> (the data listened for) and <code>metaData</code> (metaData about the data provided). All object level events will be emitted every ~16.6ms. All property level events will be emitted when that property changes.<br>
+<code>node-sixense</code> is an <code>EventEmitter</code> from the Nodejs <code>events</code> module. All listeners must be removed before exiting your application. All event callbacks should accept a <code>data</code> parameter (the data listened for) and a <code>metaData</code> parameter (metaData about the data provided). All object level events will be emitted every ~16.6ms. All property level events will be emitted when that property changes.<br>
 Here is a list of the events that can be listened for:<br>
 - <code>controller:[index]</code> - (i.e. - <code>controller:0</code>) emits all data associated with the requested controller.<br>
 - <code>controller:[index]:position</code> - emits all position data associated with the requested controller.<br>
