@@ -47,7 +47,9 @@ nodeSixense.on('newListener', function (eventName) {
 					async.each(listeners, function (eventKey, callback) {
 						var eventData =
 							getEventKeyChainData(eventKey.split(":"), currentAllData, previousAllData);
-						if (eventData !== void 0) {
+						var callEvent = eventData !== void 0 && instance._events[eventKey] !== void 0
+							&& typeof instance._events[eventKey] === "function";
+						if (callEvent) {
 							instance._events[eventKey](eventData, metaData);
 						}
 						callback();
