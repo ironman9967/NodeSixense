@@ -1,6 +1,6 @@
 {
 	"name": "node-sixense",
-	"version": "0.2.72",
+	"version": "0.2.73",
 	"author": "Tyson Hester <ironman9967@gmail.com>",
 	"description": "A NodeJS addon/port of the Sixense SDK for \"six-degrees-of-freedom\" controllers.",
 	"contributors": [

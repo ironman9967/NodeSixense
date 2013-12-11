@@ -1,7 +1,7 @@
 <h1>NodeSixense</h1>
 - <a href="https://github.com/ironman9967/NodeSixense#description">Description</a><br>
 - <a href="https://github.com/ironman9967/NodeSixense#restrictions">Restrictions</a><br>
-- <a href="https://github.com/ironman9967/NodeSixense#prequisites">Prequisites</a><br>
+- <a href="https://github.com/ironman9967/NodeSixense#prerequisite">Prerequisite</a><br>
 - <a href="https://github.com/ironman9967/NodeSixense#documentation">Documentation</a><br>
 - --- <a href="https://github.com/ironman9967/NodeSixense#sixensegetallnewestdataasync"><code>sixenseGetAllNewestDataAsync</code></a><br>
 - --- <a href="https://github.com/ironman9967/NodeSixense#sixensegetallnewestdataasyncstop"><code>sixenseGetAllNewestDataAsyncStop</code></a><br>
@@ -12,18 +12,18 @@ A NodeJS addon/port of the Sixense SDK for "six-degrees-of-freedom" controllers,
 <h2>Restrictions:</h2>
 1. Linux based OS<br>
 2. Currently only one sixense base is supported.<br>
-<h2>Prequisites:</h2>
-1. node-gyp installed globally: <code>sudo npm install -g node-gyp</code><br>
+<h2>Prerequisite:</h2>
+1. node-gyp installed globally: <code>npm install -g node-gyp</code><br>
 <h2>Documentation:</h2>
 Refer to the 'Sixense_SDK_Reference.pdf' and 'Sixense_SDK_Overview.pdf' available from Sixense's website for instructions on how to utilize the available SDK methods. All the Sixense SDK methods work as described.
 <h3>There are a few additional methods meant to make working with the module easier in JavaScript:</h3>
 <h6><code>sixenseInit()</code> and <code>sixenseSetActiveBase(0)</code> should be called before accessing any of the following mechanics. Once finished with these mechanics <code>sixenseExit()</code> should be called.</h6>
 <h4><code>sixenseGetAllNewestDataAsync</code>:</h4>
-An asyncronous version of <code>sixenseGetAllNewestData</code>. This method accepts a callback that should accept <code>error</code> and <code>allData</code> parameters. The callback will be called every ~16.6ms (the refresh rate of the SixenseSDK). Once this method is invoked, you must call <code>sixenseGetAllNewestDataAsyncStop</code> in order to stop the module from executing the callback sent to <code>sixenseGetAllNewestDataAsync</code>.
+An asynchronous version of <code>sixenseGetAllNewestData</code>. This method accepts a callback that should accept <code>error</code> and <code>allData</code> parameters. The callback will be called every ~16.6ms (the refresh rate of the SixenseSDK). Once this method is invoked, you must call <code>sixenseGetAllNewestDataAsyncStop</code> in order to stop the module from executing the callback sent to <code>sixenseGetAllNewestDataAsync</code>.
 <h4><code>sixenseGetAllNewestDataAsyncStop</code>:</h4>
 This method is used to stop the execution of the callback sent <code>sixenseGetAllNewestDataAsync</code>. If <code>sixenseGetAllNewestDataAsync</code> hasn't been called, this method doesn't do anything.
 <h4>Events:</h4>
-<code>node-sixense</code> is an <code>EventEmitter</code> from the Nodejs <code>events</code> module. All listeners must be removed before exiting your application. All event callbacks should accept a <code>data</code> parameter (the data listened for) and a <code>metaData</code> parameter (metaData about the data provided). All object level events will be emitted every ~16.6ms. All property level events will be emitted when that property changes.<br>
+<code>node-sixense</code> is an <code>EventEmitter</code> from the NodeJS <code>events</code> module. All listeners must be removed before exiting your application. All event callbacks should accept a <code>data</code> parameter (the data listened for) and a <code>metaData</code> parameter (metaData about the data provided). All object level events will be emitted every ~16.6ms. All property level events will be emitted when that property changes.<br>
 Here is a list of the events that can be listened for:<br>
 - <code>controller:[index]</code> - (i.e. - <code>controller:0</code>) emits all data associated with the requested controller.<br>
 - <code>controller:[index]:position</code> - emits all position data associated with the requested controller.<br>
@@ -64,7 +64,7 @@ Here is a list of the events that can be listened for:<br>
 <h2>License:</h2>
 The Sixense SDK is licensed under Sixense EULA which can be found here: http://sixense.com/eula
 
-The JS port and Nodejs addon portions are licensed under:
+The JS port and NodeJS addon portions are licensed under:
 
 The MIT License (MIT)
 
