@@ -1,6 +1,6 @@
 {
   "name": "node-sixense",
-  "version": "0.2.74",
+  "version": "0.2.75",
   "author": "Tyson Hester <ironman9967@gmail.com>",
   "description": "A NodeJS addon/port of the Sixense SDK for \"six-degrees-of-freedom\" controllers.",
   "contributors": [
@@ -25,7 +25,7 @@
     "virtual-reality"
   ],
   "analyze": false,
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "homepage": "https://github.com/ironman9967/NodeSixense",
   "main": "node-sixense.js",
   "scripts": {
