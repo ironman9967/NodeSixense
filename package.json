@@ -1,42 +1,42 @@
 {
-	"name": "node-sixense",
-	"version": "0.2.73",
-	"author": "Tyson Hester <ironman9967@gmail.com>",
-	"description": "A NodeJS addon/port of the Sixense SDK for \"six-degrees-of-freedom\" controllers.",
-	"contributors": [
-		"Tyson Hester <ironman9967@gmail.com>",
-		"Joshua Lunsford <yurikoex@gmail.com>"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/ironman9967/NodeSixense.git"
-	},
-	"bugs": {
-		"url": "https://github.com/ironman9967/NodeSixense/issues"
-	},
-	"keywords": [
-		"sixense",
-		"six-degrees-of-freedom",
-		"game-controller",
-		"razer",
-		"hydra",
-		"nodejs",
-		"vr",
-		"virtual-reality"
-	],
-	"analyze": false,
-	"license": "MIT",
-	"homepage": "https://github.com/ironman9967/NodeSixense",
-	"main": "node-sixense.js",
-	"scripts": {
-		"install": "node-gyp rebuild"
-	},
-	"gypfile": true,
-	"devDependencies": {
-		"memwatch":"*"
-	},
-	"dependencies": {
-		"lodash":"*",
-		"async":"*"
-	}
+  "name": "node-sixense",
+  "version": "0.2.74",
+  "author": "Tyson Hester <ironman9967@gmail.com>",
+  "description": "A NodeJS addon/port of the Sixense SDK for \"six-degrees-of-freedom\" controllers.",
+  "contributors": [
+    "Tyson Hester <ironman9967@gmail.com>",
+    "Joshua Lunsford <yurikoex@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ironman9967/NodeSixense.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ironman9967/NodeSixense/issues"
+  },
+  "keywords": [
+    "sixense",
+    "six-degrees-of-freedom",
+    "game-controller",
+    "razer",
+    "hydra",
+    "nodejs",
+    "vr",
+    "virtual-reality"
+  ],
+  "analyze": false,
+  "license": "BSD-2-Clause",
+  "homepage": "https://github.com/ironman9967/NodeSixense",
+  "main": "node-sixense.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "gypfile": true,
+  "devDependencies": {
+    "memwatch": "*"
+  },
+  "dependencies": {
+    "lodash": "*",
+    "async": "*"
+  }
 }
